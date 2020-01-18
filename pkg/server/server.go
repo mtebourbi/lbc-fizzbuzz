@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,23 +18,25 @@ func ListenAndServe() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Get("/fizzbuzz", fizzBuzzHandler)
+	r.Get("/tophits", topRequestHandler)
 
 	http.ListenAndServe(":8080", r)
 }
 
 func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
+	//FIXME: More clean way to get url query
 	sInt1 := r.URL.Query().Get("int1")
 	sInt2 := r.URL.Query().Get("int2")
 	sLimit := r.URL.Query().Get("limit")
-	str1 := r.URL.Query().Get("str1")
-	str2 := r.URL.Query().Get("str2")
+	fuzz := r.URL.Query().Get("str1")
+	buzz := r.URL.Query().Get("str2")
 
-	int1, err := strconv.Atoi(sInt1)
+	mult1, err := strconv.Atoi(sInt1)
 	if err != nil {
 		renderBadRequest(w)
 		return
 	}
-	int2, err := strconv.Atoi(sInt2)
+	mult2, err := strconv.Atoi(sInt2)
 	if err != nil {
 		renderBadRequest(w)
 		return
@@ -44,13 +47,24 @@ func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := fizzbuzz.FizzBuzz(int1, int2, limit, str1, str2)
+	Accept(mult1, mult2, limit, fuzz, buzz)
+
+	res, err := fizzbuzz.FizzBuzz(mult1, mult2, limit, fuzz, buzz)
 	if err != nil {
 		renderBadRequest(w)
 		return
 	}
 
 	w.Write([]byte(strings.Join(res, ",") + "\n"))
+}
+
+func topRequestHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := json.Marshal(TopHitRequest())
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(b)
 }
 
 func renderBadRequest(w http.ResponseWriter) {
