@@ -2,13 +2,26 @@ package server
 
 import "sync"
 
+type RequestParams struct {
+	Mult1 int    `json:"int1"`
+	Mult2 int    `json:"int2"`
+	Limit int    `json:"limit"`
+	Fuzz  string `json:"str1"`
+	Buzz  string `json:"str2"`
+}
+
+type RequestHit struct {
+	RequestParams
+	Counter int64 `json:"hits"`
+}
+
 type requestRepo struct {
 	requestStats map[RequestParams]int64
 	sync.RWMutex
 }
 
-func NewRequestRepo() requestRepo {
-	return requestRepo{
+func NewRequestRepo() *requestRepo {
+	return &requestRepo{
 		requestStats: make(map[RequestParams]int64),
 	}
 }
@@ -51,17 +64,4 @@ func Accept(mult1, mult2, limit int, fuzz, buzz string) {
 
 func TopHitRequest() RequestHit {
 	return defaultRequestRepo.TopRequest()
-}
-
-type RequestParams struct {
-	Mult1 int    `json:"int1"`
-	Mult2 int    `json:"int2"`
-	Limit int    `json:"limit"`
-	Fuzz  string `json:"str1"`
-	Buzz  string `json:"str2"`
-}
-
-type RequestHit struct {
-	RequestParams
-	Counter int64 `json:"hits"`
 }
