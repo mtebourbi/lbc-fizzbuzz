@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,7 +14,7 @@ import (
 )
 
 // ListenAndServe start the fizzbuzz web service.
-func ListenAndServe() error {
+func ListenAndServe(listenPort int) error {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
@@ -25,7 +26,7 @@ func ListenAndServe() error {
 		w.Write([]byte("pong\n"))
 	})
 
-	return http.ListenAndServe(":8080", r)
+	return http.ListenAndServe(fmt.Sprintf(":%d", listenPort), r)
 }
 
 func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
