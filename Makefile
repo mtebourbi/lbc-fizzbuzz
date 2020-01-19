@@ -6,6 +6,9 @@ all: docker-build
 test: fmt vet
 	go test ./... -v
 
+bench: fmt vet test
+	go test ./... -bench .
+
 # Build fizzbuzz server binary (use this if you want the docker version).
 build: test
 	go build -o output/bin/fizzbuzz-srv github.com/mtebourbi/lbc-fizzbuzz/cmd/fizzbuzz-srv/
