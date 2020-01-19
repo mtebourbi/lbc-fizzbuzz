@@ -12,7 +12,7 @@ import (
 )
 
 // ListenAndServe start the fizzbuzz web service.
-func ListenAndServe() {
+func ListenAndServe() error {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
@@ -20,7 +20,7 @@ func ListenAndServe() {
 	r.Get("/fizzbuzz", fizzBuzzHandler)
 	r.Get("/tophits", topRequestHandler)
 
-	http.ListenAndServe(":8080", r)
+	return http.ListenAndServe(":8080", r)
 }
 
 func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
