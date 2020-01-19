@@ -4,7 +4,7 @@ all: docker-build
 
 # Run all packages tests.
 test: fmt vet
-	go test ./... -v
+	go test ./... -v -count=1
 
 bench: fmt vet test
 	go test ./... -bench .

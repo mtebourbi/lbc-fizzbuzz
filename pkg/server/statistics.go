@@ -17,6 +17,7 @@ type RequestHit struct {
 
 type requestRepo struct {
 	requestStats map[RequestParams]int64
+	topRequest   RequestHit
 	sync.RWMutex
 }
 
@@ -30,24 +31,20 @@ func (r *requestRepo) Accept(rp RequestParams) {
 	r.Lock()
 	defer r.Unlock()
 	r.requestStats[rp]++
-}
 
-func (r *requestRepo) TopRequest() RequestHit {
-	var req RequestParams
-	var hits int64
-	r.RLock()
-	defer r.RUnlock()
-	for r, h := range r.requestStats {
-		if h > hits {
-			req = r
-			hits = h
+	if r.requestStats[rp] > r.topRequest.Counter {
+		r.topRequest = RequestHit{
+			RequestParams: rp,
+			Counter:       r.requestStats[rp],
 		}
 	}
 
-	return RequestHit{
-		Counter:       hits,
-		RequestParams: req,
-	}
+}
+
+func (r *requestRepo) TopRequest() RequestHit {
+	r.RLock()
+	defer r.RUnlock()
+	return r.topRequest
 }
 
 var defaultRequestRepo = NewRequestRepo()
