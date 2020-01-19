@@ -1,0 +1,2 @@
+# Exclude local build from docker build context.
+/output
