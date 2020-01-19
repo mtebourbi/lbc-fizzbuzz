@@ -1,10 +1,13 @@
 package main
 
-import "fmt"
-
-import "github.com/mtebourbi/lbc-fizzbuzz/pkg/server"
+import (
+	"github.com/mtebourbi/lbc-fizzbuzz/pkg/server"
+	"github.com/sirupsen/logrus"
+)
 
 func main() {
-	fmt.Println("FizzBuzz web service")
-	server.ListenAndServe()
+	logrus.Info("FizzBuzz web service")
+	if err := server.ListenAndServe(); err != nil {
+		logrus.WithError(err).Fatal("main: failed to start http server")
+	}
 }

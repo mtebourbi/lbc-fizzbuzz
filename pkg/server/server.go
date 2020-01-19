@@ -9,14 +9,15 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/mtebourbi/lbc-fizzbuzz/pkg/fizzbuzz"
+	"github.com/sirupsen/logrus"
 )
 
 // ListenAndServe start the fizzbuzz web service.
 func ListenAndServe() error {
 	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logger) // FIXME: Must provide a logrus middleware for coherent logging output.
 	r.Get("/fizzbuzz", fizzBuzzHandler)
 	r.Get("/tophits", topRequestHandler)
 	// Healthcheck resource.
@@ -37,16 +38,19 @@ func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
 
 	mult1, err := strconv.Atoi(sInt1)
 	if err != nil {
+		logrus.WithError(err).Error("server: int1 query string")
 		renderBadRequest(w)
 		return
 	}
 	mult2, err := strconv.Atoi(sInt2)
 	if err != nil {
+		logrus.WithError(err).Error("server: int2 query string")
 		renderBadRequest(w)
 		return
 	}
 	limit, err := strconv.Atoi(sLimit)
 	if err != nil {
+		logrus.WithError(err).Error("server: limit query string")
 		renderBadRequest(w)
 		return
 	}
@@ -55,6 +59,14 @@ func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, err := fizzbuzz.FizzBuzz(mult1, mult2, limit, fuzz, buzz)
 	if err != nil {
+		logrus.WithFields(
+			logrus.Fields{
+				"mult1": mult1,
+				"mult2": mult2,
+				"limit": limit,
+				"fuzz":  fuzz,
+				"buzz":  buzz,
+			}).WithError(err).Error("server: generating fizzbuzz")
 		renderBadRequest(w)
 		return
 	}
@@ -65,7 +77,9 @@ func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
 func topRequestHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(TopHitRequest())
 	if err != nil {
+		logrus.WithError(err).Error("server: generating top hit response")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(b)
