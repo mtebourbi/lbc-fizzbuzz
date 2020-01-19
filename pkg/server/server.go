@@ -19,6 +19,10 @@ func ListenAndServe() error {
 	r.Use(middleware.Recoverer)
 	r.Get("/fizzbuzz", fizzBuzzHandler)
 	r.Get("/tophits", topRequestHandler)
+	// Healthcheck resource.
+	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong\n"))
+	})
 
 	return http.ListenAndServe(":8080", r)
 }

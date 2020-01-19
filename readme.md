@@ -22,4 +22,9 @@ This endpoint should:
 
 
 ## Test service :
+
 `curl -v "localhost:8080/fizzbuzz?int1=3&int2=5&limit=30&str1=fizz&str2=buzz"`
+
+`curl -v localhost:8080/tophits`
+
+`curl -v localhost:8080/ping`
