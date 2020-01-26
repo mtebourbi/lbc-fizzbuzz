@@ -30,4 +30,4 @@ vet:
 
 # Clean the build files.
 clean:
-	rm -Rf output
+	rm -Rf output/*
