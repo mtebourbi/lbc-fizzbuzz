@@ -72,6 +72,7 @@ func TestFizzBuzz(t *testing.T) {
 
 	for _, tst := range tests {
 		tf := func(t *testing.T) {
+			t.Parallel()
 			res, err := FizzBuzz(tst.args.mult1, tst.args.mult2, tst.args.limit, tst.args.fizz, tst.args.buzz)
 			if err != nil {
 				t.Error(err)

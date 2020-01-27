@@ -54,13 +54,13 @@ func (r *requestRepo) TopRequest() RequestHit {
 	return r.topRequest
 }
 
-var defaultRequestRepo = NewRequestRepo()
+var DefaultRequestRepo = NewRequestRepo()
 
 // Accept process a RequestParams incrementing a counter of calls
 // using the same values.
 // This version use the default repo.
 func Accept(mult1, mult2, limit int, fuzz, buzz string) {
-	defaultRequestRepo.Accept(RequestParams{
+	DefaultRequestRepo.Accept(RequestParams{
 		Mult1: mult1,
 		Mult2: mult2,
 		Limit: limit,
@@ -72,5 +72,5 @@ func Accept(mult1, mult2, limit int, fuzz, buzz string) {
 // TopHitRequest return the RequestHit which has the grater counter in this repo.
 // This version use the default repo.
 func TopHitRequest() RequestHit {
-	return defaultRequestRepo.TopRequest()
+	return DefaultRequestRepo.TopRequest()
 }

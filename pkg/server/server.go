@@ -15,6 +15,11 @@ import (
 
 // ListenAndServe start the fizzbuzz web service.
 func ListenAndServe(listenPort int) error {
+	return http.ListenAndServe(fmt.Sprintf(":%d", listenPort), RegisterRoutes())
+}
+
+// RegisterRoutes create a http handler setup with all the server routes setup.
+func RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
@@ -25,8 +30,7 @@ func ListenAndServe(listenPort int) error {
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong\n"))
 	})
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", listenPort), r)
+	return r
 }
 
 func fizzBuzzHandler(w http.ResponseWriter, r *http.Request) {
