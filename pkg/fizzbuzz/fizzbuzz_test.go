@@ -15,11 +15,13 @@ func TestFizzBuzz(t *testing.T) {
 		value string
 	}
 
-	var testFixtures = []struct {
+	var tests = []struct {
+		name string
 		args arguments
 		expe []expected
 	}{
 		{
+			name: "basic",
 			args: arguments{
 				mult1: 3,
 				mult2: 5,
@@ -35,6 +37,7 @@ func TestFizzBuzz(t *testing.T) {
 			},
 		},
 		{
+			name: "different fizz",
 			args: arguments{
 				mult1: 3,
 				mult2: 5,
@@ -50,6 +53,7 @@ func TestFizzBuzz(t *testing.T) {
 			},
 		},
 		{
+			name: "non numbers",
 			args: arguments{
 				mult1: 1,
 				mult2: 5,
@@ -66,20 +70,23 @@ func TestFizzBuzz(t *testing.T) {
 		},
 	}
 
-	for _, tst := range testFixtures {
-		res, err := FizzBuzz(tst.args.mult1, tst.args.mult2, tst.args.limit, tst.args.fizz, tst.args.buzz)
-		if err != nil {
-			t.Error(err)
-		}
-		if len(res) != 30 {
-			t.Errorf("expected lenth of result slice 30 found %v", len(res))
-		}
-		for _, e := range tst.expe {
-			if r := res[e.index]; r != e.value {
-				t.Errorf("expected %v found %v", e.value, r)
+	for _, tst := range tests {
+		tf := func(t *testing.T) {
+			t.Parallel()
+			res, err := FizzBuzz(tst.args.mult1, tst.args.mult2, tst.args.limit, tst.args.fizz, tst.args.buzz)
+			if err != nil {
+				t.Error(err)
+			}
+			if len(res) != 30 {
+				t.Errorf("expected lenth of result slice 30 found %v", len(res))
+			}
+			for _, e := range tst.expe {
+				if r := res[e.index]; r != e.value {
+					t.Errorf("expected %v found %v", e.value, r)
+				}
 			}
 		}
-
+		t.Run(tst.name, tf)
 	}
 
 }

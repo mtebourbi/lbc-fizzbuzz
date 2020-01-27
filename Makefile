@@ -4,7 +4,7 @@ all: docker-build
 
 # Run all packages tests.
 test: fmt vet
-	go test ./... -v -count=1
+	go test ./... -coverprofile output/cover.out
 
 bench: fmt vet test
 	go test ./... -bench .
@@ -30,4 +30,4 @@ vet:
 
 # Clean the build files.
 clean:
-	rm -Rf output
+	rm -Rf output/*
